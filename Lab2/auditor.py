@@ -39,6 +39,11 @@ while True:
     inventory_total += quantity
     print(f"  Accepted. Current inventory total: {inventory_total}\n")
 
+    # 7. Trigger Overstock Alert if total exceeds 500 units
+    if inventory_total > 500:
+        print("ERROR: Overstock alert! Inventory exceeds 500 units.\n")
+        break
+
 
 if user_input.lower() == "quit":
     print("\n=== Final Report ===")
