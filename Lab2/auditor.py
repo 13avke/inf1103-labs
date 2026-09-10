@@ -20,6 +20,25 @@ while True:
     if user_input.lower() == "quit":
         break
 
+    # 4. Handle invalid input using try-except
+    try:
+    # 3. Accept stock values as integers
+        quantity = int(user_input)
+    except ValueError:
+        print(f"  ERROR: '{user_input}' is not a valid whole number. Entry rejected.\n")
+        failed_entries += 1
+        continue
+
+    # 5. Enforce business rules: reject negative numbers
+    if quantity < 0:
+        print(f"  ERROR: Negative quantity ({quantity}) is not allowed. Entry rejected.\n")
+        failed_entries += 1
+        continue
+    
+    # 6. Manage state
+    inventory_total += quantity
+    print(f"  Accepted. Current inventory total: {inventory_total}\n")
+
 
 if user_input.lower() == "quit":
     print("\n=== Final Report ===")
