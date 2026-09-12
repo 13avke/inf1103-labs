@@ -29,20 +29,24 @@ while True:
         failed_entries += 1
         continue
 
-    # 5. Enforce business rules: reject negative numbers
+    # 5. Enforce business rules: reject negative numbers and quantities greater than 500
     if quantity < 0:
         print(f"  ERROR: Negative quantity ({quantity}) is not allowed. Entry rejected.\n")
         failed_entries += 1
         continue
-    
+    # elif quantity > 500:
+    #     print(f"  ERROR: Quantity ({quantity}) exceeds maximum limit of 500. Entry rejected.\n")
+    #     failed_entries += 1
+    #     continue
+
     # 6. Manage state
     inventory_total += quantity
-    print(f"  Accepted. Current inventory total: {inventory_total}\n")
-
     # 7. Trigger Overstock Alert if total exceeds 500 units
     if inventory_total > 500:
         print("ERROR: Overstock alert! Inventory exceeds 500 units.\n")
         break
+    else:
+        print(f"  Accepted. Current inventory total: {inventory_total}\n")
 
 
 if user_input.lower() == "quit":
