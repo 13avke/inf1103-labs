@@ -10,7 +10,30 @@ INF1103 Lab 3
 def get_valid_input():
     """Handles the prompt, validates input, and returns a valid integer
     or the string 'quit'."""
-    pass
+    global failed_entries
+ 
+    while True:
+        user_input = input("Enter stock quantity: ").strip()
+ 
+        # Exit condition
+        if user_input.lower() == "quit":
+            return "quit"
+ 
+        # Handle invalid input using try-except
+        try:
+            quantity = int(user_input)
+        except ValueError:
+            print(f"  ERROR: '{user_input}' is not a valid whole number. Entry rejected.\n")
+            failed_entries += 1
+            continue
+ 
+        # Enforce business rules: reject negative numbers
+        if quantity < 0:
+            print(f"  ERROR: Negative quantity ({quantity}) is not allowed. Entry rejected.\n")
+            failed_entries += 1
+            continue
+ 
+        return quantity
  
  
 def process_delivery(current_total, new_value):
@@ -37,34 +60,16 @@ print("Enter stock quantities one at a time. Type 'quit' to stop.\n")
 # 2. Run in a continuous loop until the user types 'quit'
 
 while True:
-    user_input = input("Enter stock quantity: ").strip()
-
-    # Exit condition
-    if user_input.lower() == "quit":
+    result = get_valid_input()
+ 
+    if result == "quit":
         break
-
-    # 4. Handle invalid input using try-except
-    try:
-    # 3. Accept stock values as integers
-        quantity = int(user_input)
-    except ValueError:
-        print(f"  ERROR: '{user_input}' is not a valid whole number. Entry rejected.\n")
-        failed_entries += 1
-        continue
-
-    # 5. Enforce business rules: reject negative numbers and quantities greater than 500
-    if quantity < 0:
-        print(f"  ERROR: Negative quantity ({quantity}) is not allowed. Entry rejected.\n")
-        failed_entries += 1
-        continue
-    # elif quantity > 500:
-    #     print(f"  ERROR: Quantity ({quantity}) exceeds maximum limit of 500. Entry rejected.\n")
-    #     failed_entries += 1
-    #     continue
-
-    # 6. Manage state
+ 
+    quantity = result  # a valid, non-negative integer
+ 
+    # Manage state
     inventory_total += quantity
-    # 7. Trigger Overstock Alert if total exceeds 500 units
+    # Trigger Overstock Alert if total exceeds 500 units
     if inventory_total > 500:
         print("ERROR: Overstock alert! Inventory exceeds 500 units.\n")
         break
@@ -72,7 +77,6 @@ while True:
         print(f"  Accepted. Current inventory total: {inventory_total}\n")
 
 
-if user_input.lower() == "quit":
-    print("\n=== Final Report ===")
-    print(f"Total Units Processed: {inventory_total}")
-    print(f"Number of Failed/Rejected Entries: {failed_entries}")
+print("\n=== Final Report ===")
+print(f"Total Units Processed: {inventory_total}")
+print(f"Number of Failed/Rejected Entries: {failed_entries}")
