@@ -1,11 +1,10 @@
 """
-Modular Smart Inventory Auditor 
+Modular Inventory Auditor 
 INF1103 Lab 3
 2605565 
 """
 
-# --- Planned functions (signatures only for now) ---
-# Mapping out the inputs/outputs before writing the logic
+# --- Functions ---
  
 def get_valid_input():
     """Handles the prompt, validates input, and returns a valid integer
@@ -46,15 +45,19 @@ def calculate_tax(amount):
     return amount * 0.10
  
  
-def generate_report(total_units, failed_attempts):
+def generate_report(total_deliveries, total_units, failed_attempts):
     """Prints the final summary."""
-    pass
+    print("\n=== Final Report ===")
+    print(f"Total Deliveries Processed: {total_deliveries}")
+    print(f"Total Units Processed: {total_units}")
+    print(f"Number of Failed/Rejected Entries: {failed_attempts}")
 
 # 1. Initialize the inventory to zero at the start
 inventory_total = 0
 failed_entries = 0
+deliveries_processed = 0
 
-print("=== Smart Inventory Auditor ===")
+print("=== Modular Inventory Auditor ===")
 print("Enter stock quantities one at a time. Type 'quit' to stop.\n")
 
 # 2. Run in a continuous loop until the user types 'quit'
@@ -81,9 +84,8 @@ while True:
     else:
         tax = calculate_tax(quantity)
         inventory_total = prospective_total
+        deliveries_processed += 1
         print(f"  Accepted. Quantity: {quantity} | Tax (10%): {tax:.2f}")
         print(f"  Current inventory total: {inventory_total}\n")
 
-print("\n=== Final Report ===")
-print(f"Total Units Processed: {inventory_total}")
-print(f"Number of Failed/Rejected Entries: {failed_entries}")
+generate_report(deliveries_processed, inventory_total, failed_entries)
