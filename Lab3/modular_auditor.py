@@ -38,12 +38,12 @@ def get_valid_input():
  
 def process_delivery(current_total, new_value):
     """Calculates the new inventory total and returns it."""
-    pass
+    return current_total + new_value
  
  
 def calculate_tax(amount):
     """Returns 10% tax on the given delivery amount."""
-    pass
+    return amount * 0.10
  
  
 def generate_report(total_units, failed_attempts):
@@ -67,15 +67,22 @@ while True:
  
     quantity = result  # a valid, non-negative integer
  
-    # Manage state
-    inventory_total += quantity
-    # Trigger Overstock Alert if total exceeds 500 units
-    if inventory_total > 500:
-        print("ERROR: Overstock alert! Inventory exceeds 500 units.\n")
+    # Check what the total WOULD be before committing this delivery,
+    # so a rejected/overstocking delivery never gets added to
+    # inventory_total (and never shows up in the final report)
+    prospective_total = process_delivery(inventory_total, quantity)
+ 
+    # Trigger Overstock Alert if the delivery would push the total over 500 units
+    if prospective_total > 500:
+        print(f"  ERROR: Overstock alert! Adding {quantity} units would bring the total to "
+              f"{prospective_total}, exceeding the 500-unit limit. Entry rejected.\n")
+        failed_entries += 1
         break
     else:
-        print(f"  Accepted. Current inventory total: {inventory_total}\n")
-
+        tax = calculate_tax(quantity)
+        inventory_total = prospective_total
+        print(f"  Accepted. Quantity: {quantity} | Tax (10%): {tax:.2f}")
+        print(f"  Current inventory total: {inventory_total}\n")
 
 print("\n=== Final Report ===")
 print(f"Total Units Processed: {inventory_total}")
