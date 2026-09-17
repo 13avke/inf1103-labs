@@ -1,8 +1,31 @@
 """
 Modular Smart Inventory Auditor 
-INF1103 Lab 2
+INF1103 Lab 3
 2605565 
 """
+
+# --- Planned functions (signatures only for now) ---
+# Mapping out the inputs/outputs before writing the logic
+ 
+def get_valid_input():
+    """Handles the prompt, validates input, and returns a valid integer
+    or the string 'quit'."""
+    pass
+ 
+ 
+def process_delivery(current_total, new_value):
+    """Calculates the new inventory total and returns it."""
+    pass
+ 
+ 
+def calculate_tax(amount):
+    """Returns 10% tax on the given delivery amount."""
+    pass
+ 
+ 
+def generate_report(total_units, failed_attempts):
+    """Prints the final summary."""
+    pass
 
 # 1. Initialize the inventory to zero at the start
 inventory_total = 0
