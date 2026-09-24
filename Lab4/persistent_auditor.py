@@ -42,38 +42,28 @@ def get_valid_input():
  
  
 def process_delivery(current_total, new_value):
-    """Calculates the new inventory total and returns it."""
     return current_total + new_value
  
  
 def calculate_tax(amount):
-    """Returns 10% tax on the given delivery amount."""
     return amount * 0.10
  
  
-def generate_report(total_deliveries, total_units, failed_attempts):
-    """Prints the final summary."""
+def generate_report(transaction_history, total_units, failed_attempts):
     print("\n=== Final Report ===")
-    print(f"Total Deliveries Processed: {total_deliveries}")
-    print(f"Total Units Processed: {total_units}")
+    print(f"Total Deliveries Recorded: {len(transaction_history)}")
+    print(f"Total Units in Inventory: {total_units}")
     print(f"Number of Failed/Rejected Entries: {failed_attempts}")
+    print(f"Transaction History: {transaction_history}")
 
 
 def load_inventory():
-    """Reads the saved total and transaction history from inventory.txt.
-    File format: line 1 is the total, each line after is one transaction.
-    If the file doesn't exist (or is unreadable), starts with an empty
-    inventory instead of raising an error.
 
-    Returns:
-        (int, list) -> e.g. (350, [100, 250])
-    """
     if not os.path.exists(INVENTORY_FILE):
         print("No inventory file found. Starting with an empty inventory.\n")
         return 0, []
 
     try:
-        # utf-8-sig ignores the hidden BOM that some Windows editors add
         with open(INVENTORY_FILE, "r", encoding="utf-8-sig") as file:
             lines = [line.strip() for line in file.readlines() if line.strip() != ""]
 
@@ -88,12 +78,12 @@ def load_inventory():
         return 0, []
 
 # 1. Load the inventory saved from the previous run (or start empty)
-inventory_total, loaded_history = load_inventory()
+inventory_total, transaction_history = load_inventory()
 failed_entries = 0
-deliveries_processed = 0
 
 print("=== Modular Inventory Auditor ===")
 print(f"Starting inventory total: {inventory_total}")
+print(f"Previous transactions: {transaction_history}")
 print("Enter stock quantities one at a time. Type 'quit' to stop.\n")
 
 # 2. Run in a continuous loop until the user types 'quit'
@@ -106,9 +96,6 @@ while True:
  
     quantity = result  # a valid, non-negative integer
  
-    # Check what the total WOULD be before committing this delivery,
-    # so a rejected/overstocking delivery never gets added to
-    # inventory_total (and never shows up in the final report)
     prospective_total = process_delivery(inventory_total, quantity)
  
     # Trigger Overstock Alert if the delivery would push the total over 500 units
@@ -120,8 +107,8 @@ while True:
     else:
         tax = calculate_tax(quantity)
         inventory_total = prospective_total
-        deliveries_processed += 1
+        transaction_history.append(quantity)
         print(f"  Accepted. Quantity: {quantity} | Tax (10%): {tax:.2f}")
         print(f"  Current inventory total: {inventory_total}\n")
 
-generate_report(deliveries_processed, inventory_total, failed_entries)
+generate_report(transaction_history, inventory_total, failed_entries)
