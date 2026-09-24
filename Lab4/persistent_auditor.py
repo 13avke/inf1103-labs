@@ -4,6 +4,12 @@ INF1103 Lab 4
 2605565 
 """
 
+import os
+
+# inventory.txt always lives next to this script, no matter which
+# folder the program is run from
+INVENTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "inventory.txt")
+
 # --- Functions ---
 
 def get_valid_input():
@@ -52,12 +58,42 @@ def generate_report(total_deliveries, total_units, failed_attempts):
     print(f"Total Units Processed: {total_units}")
     print(f"Number of Failed/Rejected Entries: {failed_attempts}")
 
-# 1. Initialize the inventory to zero at the start
-inventory_total = 0
+
+def load_inventory():
+    """Reads the saved total and transaction history from inventory.txt.
+    File format: line 1 is the total, each line after is one transaction.
+    If the file doesn't exist (or is unreadable), starts with an empty
+    inventory instead of raising an error.
+
+    Returns:
+        (int, list) -> e.g. (350, [100, 250])
+    """
+    if not os.path.exists(INVENTORY_FILE):
+        print("No inventory file found. Starting with an empty inventory.\n")
+        return 0, []
+
+    try:
+        # utf-8-sig ignores the hidden BOM that some Windows editors add
+        with open(INVENTORY_FILE, "r", encoding="utf-8-sig") as file:
+            lines = [line.strip() for line in file.readlines() if line.strip() != ""]
+
+        if not lines:
+            return 0, []
+
+        total = int(lines[0])
+        history = [int(line) for line in lines[1:]]
+        return total, history
+    except ValueError:
+        print("WARNING: inventory.txt is not in the expected format. Starting with an empty inventory.\n")
+        return 0, []
+
+# 1. Load the inventory saved from the previous run (or start empty)
+inventory_total, loaded_history = load_inventory()
 failed_entries = 0
 deliveries_processed = 0
 
 print("=== Modular Inventory Auditor ===")
+print(f"Starting inventory total: {inventory_total}")
 print("Enter stock quantities one at a time. Type 'quit' to stop.\n")
 
 # 2. Run in a continuous loop until the user types 'quit'
