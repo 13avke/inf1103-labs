@@ -45,17 +45,17 @@ def calculate_tax(amount):
     return amount * 0.10
  
  
-def generate_report(deliveries_log, total_units, failed_attempts):
+def generate_report(total_deliveries, total_units, failed_attempts):
     """Prints the final summary."""
     print("\n=== Final Report ===")
-    print(f"Total Deliveries Processed: {len(deliveries_log)}")
+    print(f"Total Deliveries Processed: {total_deliveries}")
     print(f"Total Units Processed: {total_units}")
     print(f"Number of Failed/Rejected Entries: {failed_attempts}")
 
 # 1. Initialize the inventory to zero at the start
 inventory_total = 0
 failed_entries = 0
-deliveries_log = []
+deliveries_processed = 0
 
 print("=== Modular Inventory Auditor ===")
 print("Enter stock quantities one at a time. Type 'quit' to stop.\n")
@@ -84,8 +84,8 @@ while True:
     else:
         tax = calculate_tax(quantity)
         inventory_total = prospective_total
-        deliveries_log.append({"quantity": quantity, "tax": tax})
+        deliveries_processed += 1
         print(f"  Accepted. Quantity: {quantity} | Tax (10%): {tax:.2f}")
         print(f"  Current inventory total: {inventory_total}\n")
 
-generate_report(deliveries_log, inventory_total, failed_entries)
+generate_report(deliveries_processed, inventory_total, failed_entries)
