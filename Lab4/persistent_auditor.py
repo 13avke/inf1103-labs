@@ -42,14 +42,17 @@ def get_valid_input():
  
  
 def process_delivery(current_total, new_value):
+    """Calculates the new inventory total and returns it."""
     return current_total + new_value
  
  
 def calculate_tax(amount):
+    """Returns 10% tax on the given delivery amount."""
     return amount * 0.10
  
  
 def generate_report(transaction_history, total_units, failed_attempts):
+    """Prints the final summary."""
     print("\n=== Final Report ===")
     print(f"Total Deliveries Recorded: {len(transaction_history)}")
     print(f"Total Units in Inventory: {total_units}")
@@ -58,7 +61,7 @@ def generate_report(transaction_history, total_units, failed_attempts):
 
 
 def load_inventory():
-
+    #Reads the saved total and transaction history from inventory.txt.
     if not os.path.exists(INVENTORY_FILE):
         print("No inventory file found. Starting with an empty inventory.\n")
         return 0, []
@@ -76,6 +79,16 @@ def load_inventory():
     except ValueError:
         print("WARNING: inventory.txt is not in the expected format. Starting with an empty inventory.\n")
         return 0, []
+
+
+def save_inventory(total, history):
+    """Writes the final total and the transaction history to inventory.txt,
+    in the same format load_inventory() reads."""
+    with open(INVENTORY_FILE, "w", encoding="utf-8") as file:
+        file.write(f"{total}\n")
+        for amount in history:
+            file.write(f"{amount}\n")
+    print(f"\nInventory saved to {INVENTORY_FILE}")
 
 # 1. Load the inventory saved from the previous run (or start empty)
 inventory_total, transaction_history = load_inventory()
@@ -95,7 +108,6 @@ while True:
         break
  
     quantity = result  # a valid, non-negative integer
- 
     prospective_total = process_delivery(inventory_total, quantity)
  
     # Trigger Overstock Alert if the delivery would push the total over 500 units
@@ -112,3 +124,6 @@ while True:
         print(f"  Current inventory total: {inventory_total}\n")
 
 generate_report(transaction_history, inventory_total, failed_entries)
+
+# 3. Write-back: save the final total and history for the next run
+save_inventory(inventory_total, transaction_history)
