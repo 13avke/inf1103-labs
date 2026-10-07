@@ -4,12 +4,12 @@ INF1103 Lab 5
 2605565
 """
 
-# Starting inventory: each product is a dictionary stored in a list
-inventory = [
-    {"id": "P001", "name": "Laptop", "price": 1200.00, "stock": 15},
-    {"id": "P002", "name": "Mouse", "price": 25.50, "stock": 40},
-    {"id": "P003", "name": "Keyboard", "price": 45.00, "stock": 25},
-]
+import json
+import os
+import sys
+
+# Path to inventory.json, kept in the same folder as this script
+INVENTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "inventory.json")
 
 
 # Display every product in the inventory
@@ -97,7 +97,20 @@ def show_product(product):
 
 # Load the inventory from inventory.json, or start empty if it doesn't exist
 def load_inventory():
-    pass
+    if not os.path.exists(INVENTORY_FILE):
+        print("\ninventory.json not found. Starting with an empty inventory.")
+        return []
+
+    print("\ninventory.json found.")
+    try:
+        with open(INVENTORY_FILE, "r", encoding="utf-8-sig") as file:
+            inventory = json.load(file)
+    except json.JSONDecodeError:
+        print("ERROR: inventory.json could not be read. Fix or delete it, then run the program again.")
+        sys.exit(1)
+
+    print("Inventory loaded successfully.")
+    return inventory
 
 
 # Save the inventory to inventory.json
@@ -109,6 +122,9 @@ def save_inventory(inventory):
 print("=" * 40)
 print("INVENTORY MANAGEMENT SYSTEM")
 print("=" * 40)
+
+# Load the saved inventory
+inventory = load_inventory()
 
 # Menu loop, runs until the user picks Exit
 while True:
