@@ -115,7 +115,8 @@ def load_inventory():
 
 # Save the inventory to inventory.json
 def save_inventory(inventory):
-    pass
+    with open(INVENTORY_FILE, "w", encoding="utf-8") as file:
+        json.dump(inventory, file, indent=4)
 
 
 # Program header
@@ -155,8 +156,13 @@ while True:
             else:
                 print("\nProduct not found.")
         case "5":
+            print("\nSaving inventory...")
             save_inventory(inventory)
+            print("Inventory saved successfully to inventory.json.")
         case "6":
+            print("\nSaving inventory before exit...")
+            save_inventory(inventory)
+            print("Inventory saved successfully.")
             print("\nThank you for using Inventory Management System.")
             print("Program terminated.")
             break
