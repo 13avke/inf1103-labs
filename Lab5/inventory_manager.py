@@ -24,19 +24,75 @@ def display_all(inventory):
     print("-" * 48)
 
 
+# Keep asking until a valid, non-negative number is entered
+def get_number(prompt, number_type):
+    while True:
+        value = input(prompt).strip()
+        try:
+            number = number_type(value)
+        except ValueError:
+            print("  ERROR: Please enter a valid number.")
+            continue
+        if number < 0:
+            print("  ERROR: Value cannot be negative.")
+            continue
+        return number
+
+
 # Add a new product to the inventory
 def add_product(inventory):
-    pass
+    print("\nAdd New Product")
+    product_id = input("Product ID: ").strip().upper()
+    if product_id == "":
+        print("\nProduct ID cannot be empty.")
+        return
+    if search_product(inventory, product_id):
+        print(f"\nProduct ID {product_id} already exists.")
+        return
+
+    name = input("Product Name: ").strip()
+    while name == "":
+        name = input("Product Name cannot be empty. Product Name: ").strip()
+
+    price = get_number("Price: ", float)
+    stock = get_number("Stock Quantity: ", int)
+
+    inventory.append({"id": product_id, "name": name, "price": price, "stock": stock})
+    print("\nProduct added successfully!")
 
 
 # Change the stock quantity of an existing product
 def update_stock(inventory):
-    pass
+    print("\nUpdate Stock")
+    product = search_product(inventory, input("Enter Product ID: "))
+    if product is None:
+        print("\nProduct not found.")
+        return
+
+    print("\nProduct Found:")
+    print(f"Name: {product['name']}")
+    print(f"Current Stock: {product['stock']}\n")
+    product["stock"] = get_number("New Stock Quantity: ", int)
+    print("\nStock updated successfully!")
 
 
 # Find a product by its ID, or return None if it doesn't exist
 def search_product(inventory, product_id):
-    pass
+    for product in inventory:
+        if product["id"] == product_id.strip().upper():
+            return product
+    return None
+
+
+# Print the details of a single product
+def show_product(product):
+    print("\nProduct Found")
+    print("-" * 48)
+    print(f"ID: {product['id']}")
+    print(f"Name: {product['name']}")
+    print(f"Price: ${product['price']:.2f}")
+    print(f"Stock: {product['stock']}")
+    print("-" * 48)
 
 
 # Load the inventory from inventory.json, or start empty if it doesn't exist
@@ -54,6 +110,39 @@ print("=" * 40)
 print("INVENTORY MANAGEMENT SYSTEM")
 print("=" * 40)
 
-# Show the starting inventory
-display_all(inventory)
+# Menu loop, runs until the user picks Exit
+while True:
+    print("\n----------- MENU -----------")
+    print("1. Display All Products")
+    print("2. Add Product")
+    print("3. Update Stock")
+    print("4. Search Product")
+    print("5. Save Inventory")
+    print("6. Exit")
+    print("----------------------------")
 
+    option = input("\nEnter option: ").strip()
+
+    # Run the chosen option
+    match option:
+        case "1":
+            display_all(inventory)
+        case "2":
+            add_product(inventory)
+        case "3":
+            update_stock(inventory)
+        case "4":
+            print("\nSearch Product")
+            product = search_product(inventory, input("Enter Product ID: "))
+            if product:
+                show_product(product)
+            else:
+                print("\nProduct not found.")
+        case "5":
+            save_inventory(inventory)
+        case "6":
+            print("\nThank you for using Inventory Management System.")
+            print("Program terminated.")
+            break
+        case _:
+            print("\nInvalid option. Please enter a number from 1 to 6.")
