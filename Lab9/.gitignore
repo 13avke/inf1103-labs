@@ -1,0 +1,18 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Local environment variables
+.env
+
+# IDE settings
+.vscode/
+.idea/
+
+# Runtime data (goes in the submission zip only)
+inventory.json
+log.txt
